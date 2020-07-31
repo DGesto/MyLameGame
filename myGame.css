@@ -1,0 +1,35 @@
+.container {
+    display: grid;
+    background-color: rgb(81, 247, 164);
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "header header header"
+        "a canvas b"
+        "a canvas b" ;
+    
+}
+
+.title {
+    text-align: center;
+    grid-area: header;
+    color: rgb(255, 156, 117);
+    padding: 20px 10px;
+    font-family: 'MuseoModerno', cursive;
+    font-weight: 800;
+    font-size: 5em
+}
+
+.canvas {
+    justify-self: center;
+    grid-area: canvas;
+    border: 2px solid rgb(92, 92, 92);
+    background-color: honeydew;
+    height: 700px;
+}
+
+
+body {
+    margin: 0;
+    background-color: rgb(81, 247, 164);
+}
