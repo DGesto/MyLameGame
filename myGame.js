@@ -32,46 +32,69 @@ class Rectangle {
 }
 
 
-// Create Character Instances
-var rect1 = new Rectangle(
-    ((screenWidth / 6) - (100 / 2)), // to adjust the square to the center of a third of the screen (100 = rectWidth)
-    50, 
-    100,
-    100,
-    "rgb(135, 131, 209)",
-    2);
+// Create Enemy Instances function
+var createEnemies = function() {
+    var rect1 = new Rectangle(
+        ((screenWidth / 6) - (100 / 2)), // to adjust the square to the center of a third of the screen (100 = rectWidth)
+        (Math.round(Math.random() * (screenHeight - 100))), // Randomize initial y position
+        100,
+        100,
+        "rgb(135, 131, 209)",
+        0);
 
-var rect2 = new Rectangle(
-    ((screenWidth / 2) - (100 / 2)), // to adjust the square to the center of the screen (100 = rectWidth)
-    (screenHeight - 50 - 100), // to adjust the y to be identical to the top squares (50 = y from top squares, 100 = rectHeight)
-    100, 
-    100, 
-    "rgb(135, 131, 209)",
-    -3);
+    var rect2 = new Rectangle(
+        ((screenWidth / 2) - (100 / 2)), // to adjust the square to the center of the screen (100 = rectWidth)
+        (Math.round(Math.random() * (screenHeight - 100))), // Randomize initial y position
+        100, 
+        100, 
+        "rgb(135, 131, 209)",
+        0);
 
-var rect3 = new Rectangle(
-    (screenWidth - (screenWidth / 6) - (100 / 2)), // to adjust the square to the center of the last third of the screen (100 = rectWidth)
-    50, 
-    100, 
-    100, 
-    "rgb(135, 131, 209)",
-    1);
+    var rect3 = new Rectangle(
+        (screenWidth - (screenWidth / 6) - (100 / 2)), // to adjust the square to the center of the last third of the screen (100 = rectWidth)
+        (Math.round(Math.random() * (screenHeight - 100))), // Randomize initial y position
+        100, 
+        100, 
+        "rgb(135, 131, 209)",
+        0);
 
-var rectangles = [rect1, rect2, rect3];
+    var rectangles = [rect1, rect2, rect3];
 
-var playerRect = new Rectangle(
-    10,
-    ((screenHeight/2) - Math.round(25 / 2)), // To adjust the start position in the middle of the screen (25 = rectHeight)
-    25,
-    25,
-    "rgb(118, 66, 72)",
-    0
-);
+    // Randomize initial speed of Enemies
+    rectangles.forEach(rect => {
+        if (rect.y <= (screenHeight / 2) - rect.height) {
+           rect.speed = Math.floor(Math.random() * (6 - 2)) + 2;
+        } else {
+            rect.speed = -(Math.floor(Math.random() * (6 - 2)) + 2);
+        }
+    });
+
+    return rectangles;
+}
+
+var rectangles = createEnemies(); // create enemies the 1st time
+
+
+// Create Player
+var createPlayer = function () {
+    var playerRect = new Rectangle(
+        10,
+        ((screenHeight/2) - Math.round(25 / 2)), // To adjust the start position in the middle of the screen (25 = rectHeight)
+        25,
+        25,
+        "rgb(118, 66, 72)",
+        0
+    );
+
+    return playerRect
+}
+
+var playerRect = createPlayer();
 
 var lineX = screenWidth - 50; // Position of the end line
 
 
-/* // Draw random rectangles, in random places and with random colours
+/* // Draw random rectangles, in random places and with random colours (a little experiment)
 var draw = function() {
     ctx.clearRect(0, 0, screenWidth, screenHeight); // Clears the screen to draw a new rectangle
     var x = Math.random() * screenWidth;
@@ -84,7 +107,8 @@ var draw = function() {
     ctx.fillRect(rect1.x, rect1.y, rect1.width, rect1.height); // Draws a rectangle
 }
 
-var test = setInterval(draw, 1000); */
+var test = setInterval(draw, 1000); 
+*/
 
 
 // Event Listner
@@ -94,6 +118,10 @@ document.onkeydown = function(event) {
         playerRect.speed = playerRect.maxSpeed;
     } else if (keyPressed == 37) {
         playerRect.speed = -(playerRect.maxSpeed);
+    } else if (keyPressed == 82 && isGameOver) {
+        rectangles = createEnemies();
+        playerRect = createPlayer();
+        isGameOver = false;
     } else {
         playerRect.speed = 0;
     }
@@ -148,8 +176,7 @@ var draw = function() {
 
     for (i = 0; i < 3; i++) {
         ctx.fillText(endTxt[i], txtX, txtY);
-        txtY += 25
-        console.log(txtX, txtY);
+        txtY += 25;
     }
 
     // draw each of the rectangles
@@ -177,6 +204,9 @@ var draw = function() {
         ctx.font = `bold 100px monospace`;
         txtSize = ctx.measureText('GAME OVER');
         ctx.fillText('GAME OVER', screenWidth / 2 - txtSize.width / 2, screenHeight / 2);
+        ctx.font = `60px monospace`;
+        txtSize = ctx.measureText('Press R to restart');
+        ctx.fillText('Press R to restart', screenWidth / 2 - txtSize.width / 2, screenHeight / 2 + 60);
     }
 }
 
